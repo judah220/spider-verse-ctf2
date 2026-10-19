@@ -1,0 +1,55 @@
+╔══════════════════════════════════════════════════════════════╗
+║  ORGANIZER-ONLY — Challenge #1 Solution                     ║
+║  Peter Parker's Packet Trail                                 ║
+║  ⚠ DO NOT SHARE WITH PARTICIPANTS ⚠                         ║
+╚══════════════════════════════════════════════════════════════╝
+
+EXPECTED FLAG : FLAG{n3tw0rk_str3am_1s_fun}
+POINTS        : 100
+CATEGORY      : Network Forensics
+
+── INVESTIGATION STEPS ───────────────────────────────────────
+
+1. Open stream_capture.pcap in Wireshark.
+2. Apply filter: tcp.port == 9001
+3. Right-click any packet → Follow → TCP Stream.
+4. In the stream view, locate the client→server DATA packet
+   containing the plaintext flag.
+5. The flag appears as: FLAG{n3tw0rk_str3am_1s_fun}
+
+── WIRESHARK FILTERS ─────────────────────────────────────────
+
+  tcp                        (all TCP traffic)
+  tcp.port == 9001           (challenge port)
+  tcp.flags.syn == 1         (handshake packets)
+
+── PACKET STRUCTURE ──────────────────────────────────────────
+
+  192.0.2.10:54321  →→→  198.51.100.20:9001
+
+  Packet sequence:
+  1.  SYN
+  2.  SYN-ACK
+  3.  ACK                    (3-way handshake complete)
+  4.  PSH-ACK  Client→Server "HELLO SPIDER-VERSE-CTF SERVER"
+  5.  ACK      Server→Client
+  6.  PSH-ACK  Server→Client "READY. SEND SECRET:"
+  7.  ACK      Client→Server
+  8.  PSH-ACK  Client→Server  ← FLAG IS HERE
+  9.  PSH-ACK  Server→Client "SECRET RECEIVED. THANK YOU."
+  10. FIN-ACK  (teardown)
+
+── EVIDENCE ──────────────────────────────────────────────────
+
+  Raw payload of packet #8 (client→server):
+    FLAG{n3tw0rk_str3am_1s_fun}\r\n
+
+── COMMON MISTAKES ───────────────────────────────────────────
+
+  - Looking at server-to-client packets only.
+  - Missing the PSH-ACK data packet by filtering only SYN/FIN.
+
+── VERIFICATION ──────────────────────────────────────────────
+
+  Run:  py -3 validate_project.py
+  Expected: [PASS] for all Challenge 1 checks.

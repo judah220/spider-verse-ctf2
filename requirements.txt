@@ -1,0 +1,5 @@
+# SPIDER-VERSE CTF — Python Dependencies
+# Install with: py -3 -m pip install -r requirements.txt
+
+# PCAP generation and parsing
+scapy>=2.5.0

@@ -1,0 +1,56 @@
+╔══════════════════════════════════════════════════════════════╗
+║  ORGANIZER-ONLY — Challenge #4 Solution                     ║
+║  Mysterio's Recon Network                                    ║
+║  ⚠ DO NOT SHARE WITH PARTICIPANTS ⚠                         ║
+╚══════════════════════════════════════════════════════════════╝
+
+EXPECTED FLAG : FLAG{p0rt_sc4nn3r_d3t3ct3d}
+POINTS        : 200
+CATEGORY      : Network Detection / Forensics
+
+── EXPECTED ANSWERS ──────────────────────────────────────────
+
+  Attacker IP   : 192.0.2.50
+  Target IP     : 198.51.100.10
+  Scan Technique: TCP SYN Scan (half-open scan)
+  Open Port     : 1337
+  Flag Location : Service banner on TCP port 1337
+
+── INVESTIGATION STEPS ───────────────────────────────────────
+
+Step 1 — Identify the scanner:
+  Filter: tcp.flags.syn==1 && tcp.flags.ack==0
+  → All SYN-only packets originate from 192.0.2.50
+
+Step 2 — Confirm SYN scan technique:
+  Most probes receive RST-ACK (closed ports) = SYN scan signature.
+
+Step 3 — Find the open port:
+  Filter: tcp.flags.syn==1 && tcp.flags.ack==1
+  → Only port 1337 sent a SYN-ACK response.
+
+Step 4 — Follow the conversation on port 1337:
+  Filter: tcp.port == 1337
+  Right-click → Follow → TCP Stream
+  Server banner:
+    220 SPIDER-VERSE-CTF Service v1.0
+    Secret: FLAG{p0rt_sc4nn3r_d3t3ct3d}
+    Welcome to the Mysterio Recon Network.
+
+── WIRESHARK FILTERS ─────────────────────────────────────────
+
+  tcp                                     (all TCP)
+  tcp.flags.syn==1 && tcp.flags.ack==0    (SYN probes)
+  tcp.flags.syn==1 && tcp.flags.ack==1    (SYN-ACK = open port)
+  tcp.port == 1337                        (flag location)
+  ip.src == 192.0.2.50                    (attacker traffic)
+
+── COMMON MISTAKES ───────────────────────────────────────────
+
+  - Not filtering for SYN-only packets → confusing SYN+ACK.
+  - Not following TCP stream on port 1337 after identifying it.
+  - Overlooking the banner payload when looking at packet list.
+
+── VERIFICATION ──────────────────────────────────────────────
+
+  py -3 validate_project.py → [PASS] Challenge 4 checks

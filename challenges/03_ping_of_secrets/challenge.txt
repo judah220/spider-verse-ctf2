@@ -1,0 +1,37 @@
+╔══════════════════════════════════════════════════════════════╗
+║           SPIDER-VERSE CTF — Challenge #3                    ║
+║           Electro's Hidden Signal                            ║
+╚══════════════════════════════════════════════════════════════╝
+
+CATEGORY  : ICMP / Network Forensics
+DIFFICULTY: Easy
+POINTS    : 100
+
+── MISSION BRIEFING ──────────────────────────────────────────
+
+Electro has been sending signals across the multiverse, hidden
+inside what looks like ordinary network pings. To everyone else
+it looks like routine ICMP traffic. But you know better.
+
+Every ping carries a secret.
+
+── TECHNICAL OBJECTIVE ───────────────────────────────────────
+
+Analyze the ICMP packets in the attached PCAP file. A series of
+echo requests are sent between two endpoints. The secret is
+embedded in the data payload of those pings.
+
+── INVESTIGATION APPROACH ────────────────────────────────────
+
+1. Open icmp_secret.pcap in Wireshark.
+2. Apply filter: icmp
+3. Click on an ICMP Echo Request packet (Type 8).
+4. Expand the "Data" or "ICMP" section in the packet details.
+5. Look at the ASCII representation of the payload bytes.
+
+Alternative: In the Packet Bytes pane (bottom), read the
+ASCII column on the right side of the hex dump.
+
+┌─────────────────────────────────────────────────────────────┐
+│  ATTACHMENT: icmp_secret.pcap                               │
+└─────────────────────────────────────────────────────────────┘

@@ -1,0 +1,51 @@
+╔══════════════════════════════════════════════════════════════╗
+║           SPIDER-VERSE CTF — Challenge #4                    ║
+║           Mysterio's Recon Network                           ║
+╚══════════════════════════════════════════════════════════════╝
+
+CATEGORY  : Network Detection / Forensics
+DIFFICULTY: Medium
+POINTS    : 200
+
+── MISSION BRIEFING ──────────────────────────────────────────
+
+Mysterio has been running reconnaissance against our network.
+Our IDS flagged an unusual traffic burst — the kind that makes
+security engineers nervous. He came, he scanned, and somewhere
+inside his recon traffic, he left evidence of what he found.
+
+Your mission: unmask the attacker, identify the technique, find
+the hidden service, and retrieve the flag from the conversation.
+
+── TECHNICAL OBJECTIVE ───────────────────────────────────────
+
+A PCAP file was captured during the intrusion. Analyze it to
+answer the following questions:
+
+  1. What is the IP address of the attacker?
+  2. What scanning technique was used?
+  3. Which service port was found open?
+  4. What secret does the service on that port reveal?
+
+── INVESTIGATION APPROACH ────────────────────────────────────
+
+1. Open port_scan.pcap in Wireshark.
+2. Filter for SYN-only packets:
+     tcp.flags.syn == 1 && tcp.flags.ack == 0
+   → This reveals the scanner's IP and the probed ports.
+
+3. Look for successful connections (SYN-ACK responses):
+     tcp.flags.syn == 1 && tcp.flags.ack == 1
+   → Which port sent a SYN-ACK?
+
+4. Follow the TCP stream for the open port.
+   → Read the service banner carefully.
+
+WIRESHARK FILTERS:
+  - All TCP: tcp
+  - SYN probes: tcp.flags.syn==1 && tcp.flags.ack==0
+  - Open port traffic: tcp.port == <discovered port>
+
+┌─────────────────────────────────────────────────────────────┐
+│  ATTACHMENT: port_scan.pcap                                 │
+└─────────────────────────────────────────────────────────────┘

@@ -1,0 +1,38 @@
+╔══════════════════════════════════════════════════════════════╗
+║           SPIDER-VERSE CTF — Challenge #1                    ║
+║      Peter Parker's Packet Trail                             ║
+╚══════════════════════════════════════════════════════════════╝
+
+CATEGORY  : Network Forensics
+DIFFICULTY: Easy
+POINTS    : 100
+
+── MISSION BRIEFING ──────────────────────────────────────────
+
+Peter Parker intercepted a mysterious transmission on port 9001
+before vanishing into the multiverse. He managed to snag a
+packet capture before the portal closed.
+
+The secret he sent is hidden in plain sight — buried inside the
+network stream. Your mission: trace every packet, follow the
+thread, and recover what Peter transmitted.
+
+── TECHNICAL OBJECTIVE ───────────────────────────────────────
+
+Analyze the attached PCAP file. A TCP conversation takes place
+on port 9001. Inspect the application-layer data exchanged
+between the two endpoints.
+
+── INVESTIGATION APPROACH ────────────────────────────────────
+
+1. Open stream_capture.pcap in Wireshark.
+2. Apply filter: tcp.port == 9001
+3. Right-click any matching packet.
+4. Select: Follow → TCP Stream
+5. Read the conversation carefully.
+
+┌─────────────────────────────────────────────────────────────┐
+│  ATTACHMENT: stream_capture.pcap                            │
+└─────────────────────────────────────────────────────────────┘
+
+Good luck, Spider-Investigator.

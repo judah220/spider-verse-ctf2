@@ -1,0 +1,60 @@
+╔══════════════════════════════════════════════════════════════╗
+║  ORGANIZER-ONLY — Challenge #2 Solution                     ║
+║  The Green Goblin's DNS Trap                                 ║
+║  ⚠ DO NOT SHARE WITH PARTICIPANTS ⚠                         ║
+╚══════════════════════════════════════════════════════════════╝
+
+EXPECTED FLAG : FLAG{dns_1s_n0t_just_for_nam3s}
+POINTS        : 150
+CATEGORY      : DNS / Network Forensics
+
+── ENCODING SCHEME ───────────────────────────────────────────
+
+  Original flag: FLAG{dns_1s_n0t_just_for_nam3s}
+  Base64 encoded: RkxBR3tkbnNfMXNfbjB0X2p1c3RfZm9yX25hbTNzfQ==
+
+  Split into 16-character chunks:
+    Chunk 0: RkxBR3tkbnNfMX
+    Chunk 1: NfbjB0X2p1c3Rf
+    Chunk 2: Zm9yX25hbTNzfQ
+    Chunk 3: ==
+
+  DNS query label format:
+    c<index>-<chunk>.malicious.example.com.
+    e.g. c00-RkxBR3tkbnNfMX.malicious.example.com.
+
+── INVESTIGATION STEPS ───────────────────────────────────────
+
+1. Open dns_exfil.pcap in Wireshark.
+2. Filter: dns
+3. Examine the query names in the Info column.
+4. Extract the subdomain portion from each query:
+     c00-RkxBR3tkbnNfMX.malicious.example.com.  → "RkxBR3tkbnNfMX"
+     c01-NfbjB0X2p1c3Rf.malicious.example.com.  → "NfbjB0X2p1c3Rf"
+     c02-Zm9yX25hbTNzfQ.malicious.example.com.  → "Zm9yX25hbTNzfQ"
+     c03-==.malicious.example.com.  (padding)
+5. Sort by index (c00, c01, c02...).
+6. Concatenate: RkxBR3tkbnNfMXNfbjB0X2p1c3RfZm9yX25hbTNzfQ==
+7. Base64 decode:
+     python3 -c "import base64; print(base64.b64decode('RkxBR3tkbnNfMXNfbjB0X2p1c3RfZm9yX25hbTNzfQ==').decode())"
+     → FLAG{dns_1s_n0t_just_for_nam3s}
+
+── WIRESHARK FILTERS ─────────────────────────────────────────
+
+  dns                              (all DNS)
+  dns.qry.name contains "malicious" (filtered exfil queries)
+
+── TSHARK EXTRACTION ─────────────────────────────────────────
+
+  tshark -r dns_exfil.pcap -Y "dns.flags.response==0" \
+    -T fields -e dns.qry.name
+
+── COMMON MISTAKES ───────────────────────────────────────────
+
+  - Not sorting by chunk index before concatenation.
+  - Forgetting Base64 padding (== at end).
+  - Including the domain suffix in the decoded string.
+
+── VERIFICATION ──────────────────────────────────────────────
+
+  py -3 validate_project.py → [PASS] Challenge 2 checks

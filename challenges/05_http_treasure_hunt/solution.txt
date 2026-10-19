@@ -1,0 +1,69 @@
+╔══════════════════════════════════════════════════════════════╗
+║  ORGANIZER-ONLY — Challenge #5 Solution                     ║
+║  Doc Ock's Stolen File                                       ║
+║  ⚠ DO NOT SHARE WITH PARTICIPANTS ⚠                         ║
+╚══════════════════════════════════════════════════════════════╝
+
+EXPECTED FLAG : FLAG{http_f1l3_c4rv1ng_pr0}
+POINTS        : 200
+CATEGORY      : HTTP / File Carving
+
+── INVESTIGATION STEPS ───────────────────────────────────────
+
+Method A — Wireshark Export Objects (easiest):
+  1. Open http_transfer.pcap in Wireshark.
+  2. File → Export Objects → HTTP.
+  3. Select "secret_notes.txt" → Save.
+  4. Open saved file: FLAG{http_f1l3_c4rv1ng_pr0}
+
+Method B — Follow TCP Stream:
+  1. Filter: tcp.port == 8080
+  2. Right-click → Follow → TCP Stream.
+  3. The HTTP response body shows the full file content
+     including: FLAG{http_f1l3_c4rv1ng_pr0}
+
+Method C — tshark:
+  tshark -r http_transfer.pcap -Y "http.response" \
+    -T fields -e http.file_data | xxd -r -p
+
+── HTTP TRANSACTION DETAILS ──────────────────────────────────
+
+  Client:  192.0.2.200
+  Server:  198.51.100.100:8080
+
+  Request:
+    GET /secret_notes.txt HTTP/1.1
+    Host: 198.51.100.100:8080
+
+  Response:
+    HTTP/1.1 200 OK
+    Content-Type: text/plain
+    Content-Length: <n>
+    Server: DocOck-Server/1.0
+
+    === DOC OCK'S STOLEN NOTES ===
+    Classification: TOP SECRET
+    Author: Otto Octavius
+
+    The secret you seek is below:
+
+    FLAG{http_f1l3_c4rv1ng_pr0}
+
+    -- End of File --
+
+── WIRESHARK FILTERS ─────────────────────────────────────────
+
+  http                             (all HTTP)
+  http.request                     (HTTP requests)
+  http.response                    (HTTP responses)
+  tcp.port == 8080                 (challenge port)
+
+── COMMON MISTAKES ───────────────────────────────────────────
+
+  - Not checking port 8080 (non-standard HTTP port).
+  - Looking at the request instead of the response body.
+  - Not using Export Objects when it's available.
+
+── VERIFICATION ──────────────────────────────────────────────
+
+  py -3 validate_project.py → [PASS] Challenge 5 checks

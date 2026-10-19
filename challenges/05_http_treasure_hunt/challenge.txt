@@ -1,0 +1,47 @@
+╔══════════════════════════════════════════════════════════════╗
+║           SPIDER-VERSE CTF — Challenge #5                    ║
+║              Doc Ock's Stolen File                           ║
+╚══════════════════════════════════════════════════════════════╝
+
+CATEGORY  : HTTP / File Carving
+DIFFICULTY: Medium
+POINTS    : 200
+
+── MISSION BRIEFING ──────────────────────────────────────────
+
+Dr. Otto Octavius has stolen classified files via an HTTP server
+running on a non-standard port. Our network tap caught the
+transfer, but the file is buried inside raw TCP packets.
+
+You'll need to carve the file out of the packet capture and
+read what Doc Ock was trying to steal.
+
+── TECHNICAL OBJECTIVE ───────────────────────────────────────
+
+Analyze the attached PCAP and recover the file transferred over
+HTTP. The server responds to a GET request with a plain-text
+file. The flag is inside that file.
+
+── INVESTIGATION APPROACH ────────────────────────────────────
+
+METHOD A — Wireshark Export Objects:
+  1. Open http_transfer.pcap in Wireshark.
+  2. Menu: File → Export Objects → HTTP
+  3. Save the file and read its contents.
+
+METHOD B — Follow TCP Stream:
+  1. Open http_transfer.pcap in Wireshark.
+  2. Apply filter: tcp.port == 8080
+  3. Right-click any packet → Follow → TCP Stream
+  4. Read the HTTP response body.
+
+METHOD C — Command Line:
+  tshark -r http_transfer.pcap -Y "http" -T fields \
+    -e http.file_data 2>/dev/null | xxd -r -p
+
+HINT: Check the HTTP response body carefully. The flag is
+in the server's response to the file request.
+
+┌─────────────────────────────────────────────────────────────┐
+│  ATTACHMENT: http_transfer.pcap                             │
+└─────────────────────────────────────────────────────────────┘

@@ -1,0 +1,48 @@
+╔══════════════════════════════════════════════════════════════╗
+║  ORGANIZER-ONLY — Challenge #3 Solution                     ║
+║  Electro's Hidden Signal                                     ║
+║  ⚠ DO NOT SHARE WITH PARTICIPANTS ⚠                         ║
+╚══════════════════════════════════════════════════════════════╝
+
+EXPECTED FLAG : FLAG{p1ng_p4ylo4d_h1d3s_d4t4}
+POINTS        : 100
+CATEGORY      : ICMP / Network Forensics
+
+── INVESTIGATION STEPS ───────────────────────────────────────
+
+1. Open icmp_secret.pcap in Wireshark.
+2. Filter: icmp
+3. Click an ICMP Echo Request (Type: 8, Code: 0).
+4. In the packet detail pane, expand the ICMP section.
+5. Look at the "Data" field — the flag is plaintext in the payload.
+6. Alternatively, check the Packet Bytes pane (hex + ASCII).
+   The ASCII column on the right shows: FLAG{p1ng_p4ylo4d_h1d3s_d4t4}
+
+── WIRESHARK FILTERS ─────────────────────────────────────────
+
+  icmp                             (all ICMP)
+  icmp.type == 8                   (echo requests only)
+  data contains "FLAG"             (data containing flag text)
+
+── TSHARK EXTRACTION ─────────────────────────────────────────
+
+  tshark -r icmp_secret.pcap -Y "icmp.type==8" \
+    -T fields -e data.text
+
+── PACKET STRUCTURE ──────────────────────────────────────────
+
+  Source:      192.0.2.15
+  Destination: 198.51.100.25
+  Type:        ICMP Echo Request (type 8, code 0)
+  ID:          0xABCD
+  Payload:     FLAG{p1ng_p4ylo4d_h1d3s_d4t4} seq=0
+  (5 request+reply pairs, each carrying the same flag)
+
+── COMMON MISTAKES ───────────────────────────────────────────
+
+  - Looking only at Echo Reply packets (type 0).
+  - Missing the ASCII panel — the flag is human-readable bytes.
+
+── VERIFICATION ──────────────────────────────────────────────
+
+  py -3 validate_project.py → [PASS] Challenge 3 checks

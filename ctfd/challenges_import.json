@@ -1,0 +1,88 @@
+{
+    "results": [
+        {
+            "id": 1,
+            "name": "Peter Parker's Packet Trail",
+            "description": "**MISSION BRIEFING**\n\nPeter Parker intercepted a mysterious transmission on port 9001 before vanishing into the multiverse. He managed to snag a packet capture before the portal closed.\n\nThe secret he sent is hidden in plain sight — buried inside the network stream. Your mission: trace every packet, follow the thread, and recover what Peter transmitted.\n\n**TECHNICAL OBJECTIVE**\n\nAnalyze the attached PCAP file. A TCP conversation takes place on port 9001. Inspect the application-layer data exchanged between the two endpoints.\n\n**INVESTIGATION APPROACH**\n\n1. Open `stream_capture.pcap` in Wireshark.\n2. Apply filter: `tcp.port == 9001`\n3. Right-click any matching packet.\n4. Select: **Follow → TCP Stream**\n5. Read the conversation carefully.\n\n_Wireshark filter: `tcp.port == 9001`_",
+            "category": "Network Forensics",
+            "value": 100,
+            "type": "standard",
+            "state": "visible",
+            "max_attempts": 0,
+            "hints": [
+                {
+                    "content": "Try right-clicking a packet in Wireshark and looking at the 'Follow' menu.",
+                    "cost": 0
+                }
+            ]
+        },
+        {
+            "id": 2,
+            "name": "The Green Goblin's DNS Trap",
+            "description": "**MISSION BRIEFING**\n\nThe Green Goblin has been using DNS traffic to sneak secrets out of S.H.I.E.L.D.'s network. DNS — the protocol \"just for name lookups.\" Or is it?\n\nForensics analysts flagged suspicious DNS traffic to the domain `malicious.example.com`. Something is encoded in the subdomain labels. Decode the message before the Goblin escapes.\n\n**TECHNICAL OBJECTIVE**\n\nAnalyze the DNS queries in the attached PCAP file. The attacker encoded a secret in the subdomain portion of DNS query names, split across multiple sequential requests.\n\nIdentify the pattern, extract the data, reassemble it in the correct order, and decode it.\n\n**INVESTIGATION APPROACH**\n\n1. Open `dns_exfil.pcap` in Wireshark.\n2. Apply filter: `dns`\n3. Examine the DNS query names.\n4. Notice the subdomain structure and ordering scheme.\n5. Extract the encoded pieces from each query name.\n6. Reassemble in the correct sequence and decode.\n\n_Hint: The encoding method is commonly used in Base64 challenges._",
+            "category": "DNS / Network Forensics",
+            "value": 150,
+            "type": "standard",
+            "state": "visible",
+            "max_attempts": 0,
+            "hints": [
+                {
+                    "content": "Look at the subdomain labels. Each one has an index prefix. Sort them and concatenate before decoding.",
+                    "cost": 0
+                }
+            ]
+        },
+        {
+            "id": 3,
+            "name": "Electro's Hidden Signal",
+            "description": "**MISSION BRIEFING**\n\nElectro has been sending signals across the multiverse, hidden inside what looks like ordinary network pings. Every ping carries a secret.\n\n**TECHNICAL OBJECTIVE**\n\nAnalyze the ICMP packets in the attached PCAP file. The secret is embedded in the data payload of the echo requests.\n\n**INVESTIGATION APPROACH**\n\n1. Open `icmp_secret.pcap` in Wireshark.\n2. Apply filter: `icmp`\n3. Click on an ICMP Echo Request packet (Type 8).\n4. Expand the \"Data\" section in the packet details.\n5. Look at the ASCII representation of the payload bytes.\n\n_Alternative: Check the Packet Bytes pane — read the ASCII column on the right._",
+            "category": "ICMP / Network Forensics",
+            "value": 100,
+            "type": "standard",
+            "state": "visible",
+            "max_attempts": 0,
+            "hints": [
+                {
+                    "content": "ICMP packets can carry arbitrary payloads. Look at the Data field, not just the header.",
+                    "cost": 0
+                }
+            ]
+        },
+        {
+            "id": 4,
+            "name": "Mysterio's Recon Network",
+            "description": "**MISSION BRIEFING**\n\nMysterio has been running reconnaissance against our network. Our IDS flagged an unusual traffic burst. He came, he scanned, and somewhere inside his recon traffic, he left evidence of what he found.\n\nYour mission: unmask the attacker, identify the technique, find the hidden service, and retrieve the flag.\n\n**TECHNICAL OBJECTIVE**\n\nAnalyze the PCAP and answer:\n1. What is the IP address of the attacker?\n2. What scanning technique was used?\n3. Which service port was found open?\n4. What secret does the service on that port reveal?\n\n**INVESTIGATION APPROACH**\n\n1. Open `port_scan.pcap` in Wireshark.\n2. Filter: `tcp.flags.syn == 1 && tcp.flags.ack == 0` → reveals the scanner's IP.\n3. Filter: `tcp.flags.syn == 1 && tcp.flags.ack == 1` → which port sent SYN-ACK?\n4. Follow the TCP stream for the open port.\n5. Read the service banner carefully.",
+            "category": "Network Detection / Forensics",
+            "value": 200,
+            "type": "standard",
+            "state": "visible",
+            "max_attempts": 0,
+            "hints": [
+                {
+                    "content": "A TCP SYN scan sends SYN packets to many ports and waits for SYN-ACK responses from open ports.",
+                    "cost": 0
+                },
+                {
+                    "content": "Try filtering for port 1337 specifically: tcp.port == 1337",
+                    "cost": 25
+                }
+            ]
+        },
+        {
+            "id": 5,
+            "name": "Doc Ock's Stolen File",
+            "description": "**MISSION BRIEFING**\n\nDr. Otto Octavius stole classified files via an HTTP server running on a non-standard port. Our network tap caught the transfer, but the file is buried inside raw TCP packets.\n\nCarve the file from the capture and read what Doc Ock was trying to steal.\n\n**TECHNICAL OBJECTIVE**\n\nAnalyze the attached PCAP and recover the file transferred over HTTP.\n\n**INVESTIGATION APPROACH**\n\n**Method A — Wireshark Export Objects:**\n1. Open `http_transfer.pcap` in Wireshark.\n2. Menu: **File → Export Objects → HTTP**\n3. Save `secret_notes.txt` and read its contents.\n\n**Method B — Follow TCP Stream:**\n1. Filter: `tcp.port == 8080`\n2. Right-click → **Follow → TCP Stream**\n3. Read the HTTP response body.\n\n_Wireshark filter: `tcp.port == 8080`_",
+            "category": "HTTP / File Carving",
+            "value": 200,
+            "type": "standard",
+            "state": "visible",
+            "max_attempts": 0,
+            "hints": [
+                {
+                    "content": "The server is on a non-standard port. Look for HTTP traffic on port 8080, not 80.",
+                    "cost": 0
+                }
+            ]
+        }
+    ]
+}

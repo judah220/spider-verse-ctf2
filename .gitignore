@@ -1,0 +1,40 @@
+﻿# Environment secrets — NEVER commit these
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+env/
+
+# Generated PCAP files
+challenges/**/*.pcap
+
+# Docker volumes and data
+.data/
+mysql-data/
+redis-data/
+uploads/
+logs/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# CTFd generated
+CTFd/.data/

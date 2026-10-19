@@ -1,0 +1,1223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="SPIDER-VERSE CTF — Web of Cyber Secrets. A cinematic cybersecurity Capture The Flag event. Hack the system, unmask the threat, save the multiverse." />
+  <title>SPIDER-VERSE CTF — Web of Cyber Secrets</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;600;700&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ═══════════════════════════════════════════════════
+       DESIGN TOKENS
+    ═══════════════════════════════════════════════════ */
+    :root {
+      --red:        #e63946;
+      --red-dark:   #b52a35;
+      --red-glow:   rgba(230,57,70,.45);
+      --blue:       #00d4ff;
+      --blue-dark:  #0099cc;
+      --blue-glow:  rgba(0,212,255,.35);
+      --black:      #050810;
+      --dark:       #0d1117;
+      --dark2:      #141a24;
+      --glass:      rgba(13,17,23,.78);
+      --glass2:     rgba(255,255,255,.04);
+      --text:       #e8eaf0;
+      --muted:      #8892a4;
+      --border:     rgba(255,255,255,.08);
+
+      --font-head:  'Bebas Neue', sans-serif;
+      --font-sub:   'Rajdhani', sans-serif;
+      --font-body:  'Inter', sans-serif;
+    }
+
+    /* ═══════════════════════════════════════════════════
+       RESET & BASE
+    ═══════════════════════════════════════════════════ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--black);
+      color: var(--text);
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    ::selection { background: var(--red); color: #fff; }
+
+    a { color: var(--blue); text-decoration: none; transition: color .2s; }
+    a:hover { color: #fff; }
+
+    /* ═══════════════════════════════════════════════════
+       ACCESSIBILITY — reduced motion
+    ═══════════════════════════════════════════════════ */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+    }
+
+    /* ═══════════════════════════════════════════════════
+       SPIDER WEB CANVAS (full bg)
+    ═══════════════════════════════════════════════════ */
+    #spider-web-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      opacity: .18;
+    }
+
+    /* ═══════════════════════════════════════════════════
+       NYC SKYLINE SVG BACKGROUND
+    ═══════════════════════════════════════════════════ */
+    .skyline {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 45vh;
+      z-index: 0;
+      opacity: .25;
+      pointer-events: none;
+    }
+
+    /* ═══════════════════════════════════════════════════
+       LAYOUT
+    ═══════════════════════════════════════════════════ */
+    .page-wrapper { position: relative; z-index: 1; }
+
+    section { padding: 5rem 1.5rem; }
+
+    .container {
+      max-width: 1180px;
+      margin: 0 auto;
+    }
+
+    /* ═══════════════════════════════════════════════════
+       NAV
+    ═══════════════════════════════════════════════════ */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(5,8,16,.88);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      font-family: var(--font-head);
+      font-size: 1.5rem;
+      letter-spacing: .08em;
+      color: var(--red);
+      text-shadow: 0 0 16px var(--red-glow);
+    }
+
+    .nav-logo span { color: var(--blue); }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: var(--font-sub);
+      font-weight: 600;
+      font-size: .95rem;
+      letter-spacing: .06em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    .nav-links a:hover { color: var(--blue); text-shadow: 0 0 10px var(--blue-glow); }
+
+    .nav-cta {
+      font-family: var(--font-sub);
+      font-weight: 700;
+      font-size: .9rem;
+      padding: .45rem 1.2rem;
+      background: var(--red);
+      color: #fff !important;
+      border-radius: 4px;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      box-shadow: 0 0 20px var(--red-glow);
+      transition: background .2s, box-shadow .2s, transform .15s;
+    }
+
+    .nav-cta:hover {
+      background: var(--red-dark);
+      box-shadow: 0 0 32px var(--red-glow);
+      transform: translateY(-1px);
+      color: #fff !important;
+    }
+
+    /* ═══════════════════════════════════════════════════
+       HERO
+    ═══════════════════════════════════════════════════ */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 8rem 1.5rem 5rem;
+      position: relative;
+    }
+
+    .hero-eyebrow {
+      font-family: var(--font-sub);
+      font-size: .85rem;
+      letter-spacing: .25em;
+      text-transform: uppercase;
+      color: var(--blue);
+      text-shadow: 0 0 12px var(--blue-glow);
+      margin-bottom: 1rem;
+      animation: fadeUp .8s ease both;
+    }
+
+    .hero-title {
+      font-family: var(--font-head);
+      font-size: clamp(3.5rem, 10vw, 8rem);
+      line-height: 1;
+      letter-spacing: .04em;
+      background: linear-gradient(135deg, #fff 30%, var(--red) 60%, var(--blue) 90%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: none;
+      animation: fadeUp .8s .15s ease both;
+      margin-bottom: .4rem;
+    }
+
+    .hero-subtitle-quote {
+      font-family: var(--font-sub);
+      font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+      color: var(--muted);
+      font-style: italic;
+      margin-bottom: .75rem;
+      animation: fadeUp .8s .25s ease both;
+    }
+
+    .hero-subtitle-main {
+      font-family: var(--font-sub);
+      font-size: clamp(1rem, 2vw, 1.25rem);
+      color: var(--blue);
+      letter-spacing: .06em;
+      text-shadow: 0 0 18px var(--blue-glow);
+      margin-bottom: 2.5rem;
+      animation: fadeUp .8s .35s ease both;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      animation: fadeUp .8s .5s ease both;
+    }
+
+    .btn {
+      font-family: var(--font-sub);
+      font-weight: 700;
+      font-size: 1rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      padding: .85rem 2.2rem;
+      border-radius: 6px;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: all .25s;
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+    }
+
+    .btn-primary {
+      background: var(--red);
+      color: #fff;
+      box-shadow: 0 0 30px var(--red-glow);
+    }
+
+    .btn-primary:hover {
+      background: transparent;
+      border-color: var(--red);
+      color: var(--red);
+      box-shadow: 0 0 40px var(--red-glow);
+      transform: translateY(-3px);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      border-color: var(--blue);
+      color: var(--blue);
+      box-shadow: 0 0 20px var(--blue-glow);
+    }
+
+    .btn-secondary:hover {
+      background: var(--blue);
+      color: var(--black);
+      box-shadow: 0 0 40px var(--blue-glow);
+      transform: translateY(-3px);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border-color: var(--border);
+      color: var(--muted);
+    }
+
+    .btn-outline:hover {
+      border-color: var(--muted);
+      color: var(--text);
+      transform: translateY(-2px);
+    }
+
+    /* ═══════════════════════════════════════════════════
+       COUNTDOWN
+    ═══════════════════════════════════════════════════ */
+    .countdown-wrapper {
+      margin-top: 3rem;
+      animation: fadeUp .8s .65s ease both;
+    }
+
+    .countdown-label {
+      font-family: var(--font-sub);
+      font-size: .8rem;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: .75rem;
+    }
+
+    .countdown {
+      display: flex;
+      gap: 1.2rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .countdown-unit {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: .8rem 1.4rem;
+      min-width: 80px;
+      backdrop-filter: blur(8px);
+    }
+
+    .countdown-number {
+      font-family: var(--font-head);
+      font-size: 2.8rem;
+      line-height: 1;
+      color: var(--red);
+      text-shadow: 0 0 20px var(--red-glow);
+    }
+
+    .countdown-unit-label {
+      font-family: var(--font-sub);
+      font-size: .7rem;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: .2rem;
+    }
+
+    /* ═══════════════════════════════════════════════════
+       SECTION HEADERS
+    ═══════════════════════════════════════════════════ */
+    .section-tag {
+      font-family: var(--font-sub);
+      font-size: .75rem;
+      letter-spacing: .25em;
+      text-transform: uppercase;
+      color: var(--blue);
+      text-shadow: 0 0 10px var(--blue-glow);
+      margin-bottom: .5rem;
+      display: block;
+    }
+
+    .section-title {
+      font-family: var(--font-head);
+      font-size: clamp(2.2rem, 5vw, 3.5rem);
+      letter-spacing: .04em;
+      line-height: 1.1;
+      margin-bottom: 1rem;
+      color: #fff;
+    }
+
+    .section-desc {
+      color: var(--muted);
+      max-width: 600px;
+      margin-bottom: 3rem;
+      font-size: .975rem;
+    }
+
+    /* ═══════════════════════════════════════════════════
+       OVERVIEW
+    ═══════════════════════════════════════════════════ */
+    #overview { background: var(--dark); }
+
+    .overview-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    .stat-card {
+      background: var(--glass2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.8rem;
+      text-align: center;
+      transition: transform .25s, border-color .25s, box-shadow .25s;
+      backdrop-filter: blur(6px);
+    }
+
+    .stat-card:hover {
+      transform: translateY(-6px);
+      border-color: var(--red);
+      box-shadow: 0 0 30px var(--red-glow);
+    }
+
+    .stat-number {
+      font-family: var(--font-head);
+      font-size: 3rem;
+      color: var(--red);
+      text-shadow: 0 0 20px var(--red-glow);
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-family: var(--font-sub);
+      font-size: .9rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: .4rem;
+    }
+
+    /* ═══════════════════════════════════════════════════
+       CHALLENGES GRID
+    ═══════════════════════════════════════════════════ */
+    #challenges { background: var(--black); }
+
+    .challenges-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .challenge-card {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.8rem;
+      display: flex;
+      flex-direction: column;
+      gap: .75rem;
+      transition: transform .25s, border-color .25s, box-shadow .25s;
+      backdrop-filter: blur(8px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .challenge-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--red), var(--blue));
+      opacity: 0;
+      transition: opacity .25s;
+    }
+
+    .challenge-card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(0,212,255,.3);
+      box-shadow: 0 8px 40px rgba(0,0,0,.5), 0 0 25px var(--blue-glow);
+    }
+
+    .challenge-card:hover::before { opacity: 1; }
+
+    .challenge-number {
+      font-family: var(--font-head);
+      font-size: .85rem;
+      letter-spacing: .15em;
+      color: var(--muted);
+    }
+
+    .challenge-name {
+      font-family: var(--font-sub);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.2;
+    }
+
+    .challenge-category {
+      font-size: .78rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--blue);
+      font-weight: 600;
+    }
+
+    .challenge-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: auto;
+    }
+
+    .challenge-points {
+      font-family: var(--font-head);
+      font-size: 1.6rem;
+      color: var(--red);
+      text-shadow: 0 0 12px var(--red-glow);
+    }
+
+    .difficulty-badge {
+      font-size: .7rem;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      padding: .25rem .7rem;
+      border-radius: 20px;
+    }
+
+    .diff-easy   { background: rgba(0,200,100,.12); color: #00c864; border: 1px solid rgba(0,200,100,.3); }
+    .diff-medium { background: rgba(255,160,0,.12);  color: #ffa000; border: 1px solid rgba(255,160,0,.3); }
+
+    .challenge-link {
+      display: inline-block;
+      margin-top: .5rem;
+      font-family: var(--font-sub);
+      font-weight: 600;
+      font-size: .85rem;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--blue);
+      text-shadow: 0 0 8px var(--blue-glow);
+      transition: all .2s;
+    }
+
+    .challenge-link:hover { transform: translateX(4px); }
+
+    /* ═══════════════════════════════════════════════════
+       RULES
+    ═══════════════════════════════════════════════════ */
+    #rules { background: var(--dark2); }
+
+    .rules-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+
+    @media (max-width: 720px) { .rules-grid { grid-template-columns: 1fr; } }
+
+    .rules-box {
+      background: var(--glass2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.8rem;
+    }
+
+    .rules-box h3 {
+      font-family: var(--font-head);
+      font-size: 1.5rem;
+      letter-spacing: .06em;
+      color: var(--red);
+      margin-bottom: 1rem;
+    }
+
+    .rules-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: .65rem;
+    }
+
+    .rules-list li {
+      padding-left: 1.4rem;
+      position: relative;
+      color: var(--muted);
+      font-size: .9rem;
+    }
+
+    .rules-list li::before {
+      content: '◈';
+      position: absolute;
+      left: 0;
+      color: var(--red);
+    }
+
+    /* ═══════════════════════════════════════════════════
+       GETTING STARTED
+    ═══════════════════════════════════════════════════ */
+    #start { background: var(--black); }
+
+    .steps {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      max-width: 720px;
+    }
+
+    .step {
+      display: flex;
+      gap: 1.2rem;
+      align-items: flex-start;
+      background: var(--glass2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.4rem;
+      transition: border-color .2s, box-shadow .2s;
+    }
+
+    .step:hover {
+      border-color: var(--blue);
+      box-shadow: 0 0 20px var(--blue-glow);
+    }
+
+    .step-num {
+      font-family: var(--font-head);
+      font-size: 2rem;
+      color: var(--red);
+      text-shadow: 0 0 16px var(--red-glow);
+      min-width: 2rem;
+      line-height: 1;
+    }
+
+    .step-content h4 {
+      font-family: var(--font-sub);
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: .3rem;
+    }
+
+    .step-content p { color: var(--muted); font-size: .88rem; }
+
+    .step-content code {
+      background: rgba(0,212,255,.08);
+      border: 1px solid rgba(0,212,255,.2);
+      border-radius: 4px;
+      padding: .1rem .4rem;
+      font-size: .82rem;
+      color: var(--blue);
+      font-family: 'Consolas', monospace;
+    }
+
+    /* ═══════════════════════════════════════════════════
+       CTF ENTRY CTA BANNER
+    ═══════════════════════════════════════════════════ */
+    #cta {
+      background: linear-gradient(135deg, #0d1117 0%, #1a0a10 50%, #0a0d1a 100%);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      text-align: center;
+    }
+
+    #cta h2 {
+      font-family: var(--font-head);
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      letter-spacing: .04em;
+      margin-bottom: 1rem;
+    }
+
+    #cta p { color: var(--muted); max-width: 520px; margin: 0 auto 2rem; }
+
+    /* ═══════════════════════════════════════════════════
+       FOOTER
+    ═══════════════════════════════════════════════════ */
+    footer {
+      background: var(--dark);
+      border-top: 1px solid var(--border);
+      padding: 2.5rem 1.5rem;
+      text-align: center;
+    }
+
+    .footer-logo {
+      font-family: var(--font-head);
+      font-size: 1.6rem;
+      color: var(--red);
+      letter-spacing: .08em;
+      margin-bottom: .5rem;
+    }
+
+    .footer-logo span { color: var(--blue); }
+
+    footer p { color: var(--muted); font-size: .82rem; }
+
+    /* ═══════════════════════════════════════════════════
+       ANIMATIONS
+    ═══════════════════════════════════════════════════ */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 20px var(--red-glow); }
+      50%       { box-shadow: 0 0 40px rgba(230,57,70,.7), 0 0 80px rgba(230,57,70,.25); }
+    }
+
+    /* ═══════════════════════════════════════════════════
+       SCROLL OBSERVE FADE
+    ═══════════════════════════════════════════════════ */
+    .reveal {
+      opacity: 0;
+      transform: translateY(32px);
+      transition: opacity .6s ease, transform .6s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ═══════════════════════════════════════════════════
+       SCROLLBAR
+    ═══════════════════════════════════════════════════ */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--black); }
+    ::-webkit-scrollbar-thumb { background: var(--red-dark); border-radius: 3px; }
+
+    /* ═══════════════════════════════════════════════════
+       RESPONSIVE NAV
+    ═══════════════════════════════════════════════════ */
+    @media (max-width: 680px) {
+      .nav-links { display: none; }
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- ═══ SPIDER WEB CANVAS ═══════════════════════════════════════════ -->
+<canvas id="spider-web-canvas" aria-hidden="true"></canvas>
+
+<!-- ═══ NYC SKYLINE SVG ══════════════════════════════════════════════ -->
+<svg class="skyline" viewBox="0 0 1440 400" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <defs>
+    <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#e63946" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#050810" stop-opacity="1"/>
+    </linearGradient>
+  </defs>
+  <!-- Stylised NYC silhouette blocks -->
+  <g fill="url(#skyGrad)">
+    <rect x="0"   y="280" width="60"  height="120"/>
+    <rect x="50"  y="240" width="45"  height="160"/>
+    <rect x="85"  y="200" width="30"  height="200"/>
+    <rect x="110" y="260" width="55"  height="140"/>
+    <rect x="155" y="180" width="40"  height="220"/>
+    <rect x="185" y="220" width="25"  height="180"/>
+    <!-- Empire State-like tower -->
+    <rect x="210" y="100" width="50"  height="300"/>
+    <rect x="228" y="60"  width="14"  height="250"/>
+    <rect x="233" y="20"  width="4"   height="300"/>
+    <rect x="260" y="200" width="60"  height="200"/>
+    <rect x="310" y="240" width="40"  height="160"/>
+    <rect x="340" y="160" width="55"  height="240"/>
+    <rect x="385" y="220" width="35"  height="180"/>
+    <rect x="415" y="190" width="70"  height="210"/>
+    <rect x="475" y="250" width="45"  height="150"/>
+    <rect x="510" y="170" width="55"  height="230"/>
+    <rect x="555" y="210" width="40"  height="190"/>
+    <rect x="585" y="140" width="65"  height="260"/>
+    <rect x="640" y="240" width="50"  height="160"/>
+    <rect x="680" y="180" width="45"  height="220"/>
+    <!-- One World Trade-like shape -->
+    <polygon points="750,60 770,150 730,150"/>
+    <rect x="730" y="140" width="40"  height="260"/>
+    <rect x="780" y="200" width="55"  height="200"/>
+    <rect x="825" y="170" width="40"  height="230"/>
+    <rect x="855" y="230" width="60"  height="170"/>
+    <rect x="905" y="190" width="35"  height="210"/>
+    <rect x="930" y="150" width="55"  height="250"/>
+    <rect x="975" y="230" width="45"  height="170"/>
+    <rect x="1010" y="190" width="60" height="210"/>
+    <rect x="1060" y="220" width="40" height="180"/>
+    <rect x="1090" y="180" width="55" height="220"/>
+    <rect x="1135" y="250" width="35" height="150"/>
+    <rect x="1160" y="200" width="70" height="200"/>
+    <rect x="1220" y="240" width="45" height="160"/>
+    <rect x="1255" y="170" width="50" height="230"/>
+    <rect x="1295" y="220" width="40" height="180"/>
+    <rect x="1325" y="260" width="55" height="140"/>
+    <rect x="1370" y="300" width="70" height="100"/>
+  </g>
+  <!-- Neon window dots -->
+  <g fill="#00d4ff" opacity="0.3">
+    <rect x="215" y="120" width="3" height="3" rx="1"/>
+    <rect x="225" y="120" width="3" height="3" rx="1"/>
+    <rect x="215" y="135" width="3" height="3" rx="1"/>
+    <rect x="225" y="135" width="3" height="3" rx="1"/>
+    <rect x="345" y="175" width="3" height="3" rx="1"/>
+    <rect x="355" y="175" width="3" height="3" rx="1"/>
+    <rect x="500" y="190" width="3" height="3" rx="1"/>
+    <rect x="590" y="160" width="3" height="3" rx="1"/>
+    <rect x="600" y="160" width="3" height="3" rx="1"/>
+    <rect x="935" y="170" width="3" height="3" rx="1"/>
+    <rect x="945" y="170" width="3" height="3" rx="1"/>
+    <rect x="1095" y="200" width="3" height="3" rx="1"/>
+    <rect x="1105" y="200" width="3" height="3" rx="1"/>
+  </g>
+</svg>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     PAGE WRAPPER
+══════════════════════════════════════════════════════════════════ -->
+<div class="page-wrapper">
+
+  <!-- NAV -->
+  <nav role="navigation" aria-label="Main navigation">
+    <div class="nav-logo">SPIDER<span>-VERSE</span> CTF</div>
+    <ul class="nav-links">
+      <li><a href="#overview">Overview</a></li>
+      <li><a href="#challenges">Challenges</a></li>
+      <li><a href="#rules">Rules</a></li>
+      <li><a href="#start">Start</a></li>
+    </ul>
+    <!-- Replace # with your CTFd URL, e.g., http://localhost:8000 -->
+    <a href="http://localhost:8000/register" id="nav-register-btn" class="nav-cta" aria-label="Register for the CTF">REGISTER</a>
+  </nav>
+
+  <!-- ═══ HERO ═══════════════════════════════════════════════════ -->
+  <section id="hero" aria-labelledby="hero-title">
+    <p class="hero-eyebrow">🕷 Cybersecurity CTF Event</p>
+
+    <h1 id="hero-title" class="hero-title">SPIDER-VERSE CTF</h1>
+
+    <p class="hero-subtitle-quote">"With Great Power Comes Great Responsibility."</p>
+    <p class="hero-subtitle-main">Hack the System. Unmask the Threat. Save the Multiverse.</p>
+
+    <div class="hero-buttons" role="group" aria-label="Primary actions">
+      <a href="http://localhost:8000/register" id="enter-verse-btn" class="btn btn-primary" aria-label="Enter the CTF platform">
+        ⚡ ENTER THE VERSE
+      </a>
+      <a href="#challenges" id="view-challenges-btn" class="btn btn-secondary">
+        🔍 VIEW CHALLENGES
+      </a>
+      <a href="http://localhost:8000/scoreboard" id="leaderboard-btn" class="btn btn-outline">
+        🏆 LEADERBOARD
+      </a>
+    </div>
+
+    <!-- Countdown -->
+    <div class="countdown-wrapper" aria-label="Event countdown">
+      <p class="countdown-label">Event Starts In</p>
+      <div class="countdown" id="countdown" role="timer" aria-live="polite">
+        <div class="countdown-unit">
+          <span class="countdown-number" id="cd-days">--</span>
+          <span class="countdown-unit-label">Days</span>
+        </div>
+        <div class="countdown-unit">
+          <span class="countdown-number" id="cd-hours">--</span>
+          <span class="countdown-unit-label">Hours</span>
+        </div>
+        <div class="countdown-unit">
+          <span class="countdown-number" id="cd-mins">--</span>
+          <span class="countdown-unit-label">Mins</span>
+        </div>
+        <div class="countdown-unit">
+          <span class="countdown-number" id="cd-secs">--</span>
+          <span class="countdown-unit-label">Secs</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ OVERVIEW ════════════════════════════════════════════════ -->
+  <section id="overview" aria-labelledby="overview-title">
+    <div class="container">
+      <span class="section-tag reveal">🌐 Event Overview</span>
+      <h2 id="overview-title" class="section-title reveal">Web of Cyber Secrets</h2>
+      <p class="section-desc reveal">
+        SPIDER-VERSE CTF is a network forensics and cybersecurity challenge event. Unravel packet captures, decode covert communications, and expose the villains behind the traffic. Every challenge is a mission. Every flag is a victory.
+      </p>
+
+      <div class="overview-grid">
+        <div class="stat-card reveal">
+          <div class="stat-number">5</div>
+          <div class="stat-label">Challenges</div>
+        </div>
+        <div class="stat-card reveal">
+          <div class="stat-number">750</div>
+          <div class="stat-label">Total Points</div>
+        </div>
+        <div class="stat-card reveal">
+          <div class="stat-number">4</div>
+          <div class="stat-label">Categories</div>
+        </div>
+        <div class="stat-card reveal">
+          <div class="stat-number">100%</div>
+          <div class="stat-label">Beginner Friendly</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ CHALLENGES ═══════════════════════════════════════════════ -->
+  <section id="challenges" aria-labelledby="challenges-title">
+    <div class="container">
+      <span class="section-tag reveal">🕸 The Missions</span>
+      <h2 id="challenges-title" class="section-title reveal">Challenge Dossiers</h2>
+      <p class="section-desc reveal">
+        Five network forensics missions. Each challenge ships with a real PCAP file. Use Wireshark, tshark, or your tools of choice.
+      </p>
+
+      <div class="challenges-grid">
+
+        <!-- Challenge 1 -->
+        <article class="challenge-card reveal" aria-label="Challenge 1: Peter Parker's Packet Trail">
+          <div class="challenge-number">MISSION 01</div>
+          <h3 class="challenge-name">Peter Parker's Packet Trail</h3>
+          <div class="challenge-category">Network Forensics</div>
+          <p style="color:var(--muted);font-size:.88rem;">Peter's transmission was intercepted on port 9001. Follow the TCP stream and recover what he sent before the portal closed.</p>
+          <div class="challenge-meta">
+            <span class="challenge-points">100 PTS</span>
+            <span class="difficulty-badge diff-easy">Easy</span>
+          </div>
+          <!-- Links to real CTFd challenge page — update ID after import -->
+          <a href="http://localhost:8000/challenges#01-packet-trail" class="challenge-link" id="challenge-1-link">
+            Open Challenge →
+          </a>
+        </article>
+
+        <!-- Challenge 2 -->
+        <article class="challenge-card reveal" aria-label="Challenge 2: The Green Goblin's DNS Trap">
+          <div class="challenge-number">MISSION 02</div>
+          <h3 class="challenge-name">The Green Goblin's DNS Trap</h3>
+          <div class="challenge-category">DNS / Network Forensics</div>
+          <p style="color:var(--muted);font-size:.88rem;">The Goblin encoded a secret in DNS subdomain queries. Identify the labels, reassemble the sequence, and decode the message.</p>
+          <div class="challenge-meta">
+            <span class="challenge-points">150 PTS</span>
+            <span class="difficulty-badge diff-easy">Easy–Med</span>
+          </div>
+          <a href="http://localhost:8000/challenges#02-dns-trap" class="challenge-link" id="challenge-2-link">
+            Open Challenge →
+          </a>
+        </article>
+
+        <!-- Challenge 3 -->
+        <article class="challenge-card reveal" aria-label="Challenge 3: Electro's Hidden Signal">
+          <div class="challenge-number">MISSION 03</div>
+          <h3 class="challenge-name">Electro's Hidden Signal</h3>
+          <div class="challenge-category">ICMP / Network Forensics</div>
+          <p style="color:var(--muted);font-size:.88rem;">Electro hid a message inside ICMP ping packets. Inspect the payload bytes of each echo request to find his signal.</p>
+          <div class="challenge-meta">
+            <span class="challenge-points">100 PTS</span>
+            <span class="difficulty-badge diff-easy">Easy</span>
+          </div>
+          <a href="http://localhost:8000/challenges#03-electro" class="challenge-link" id="challenge-3-link">
+            Open Challenge →
+          </a>
+        </article>
+
+        <!-- Challenge 4 -->
+        <article class="challenge-card reveal" aria-label="Challenge 4: Mysterio's Recon Network">
+          <div class="challenge-number">MISSION 04</div>
+          <h3 class="challenge-name">Mysterio's Recon Network</h3>
+          <div class="challenge-category">Network Detection / Forensics</div>
+          <p style="color:var(--muted);font-size:.88rem;">Mysterio ran a port scan. Identify the attacker, the technique used, the open port, and extract the flag from the service conversation.</p>
+          <div class="challenge-meta">
+            <span class="challenge-points">200 PTS</span>
+            <span class="difficulty-badge diff-medium">Medium</span>
+          </div>
+          <a href="http://localhost:8000/challenges#04-mysterio" class="challenge-link" id="challenge-4-link">
+            Open Challenge →
+          </a>
+        </article>
+
+        <!-- Challenge 5 -->
+        <article class="challenge-card reveal" aria-label="Challenge 5: Doc Ock's Stolen File">
+          <div class="challenge-number">MISSION 05</div>
+          <h3 class="challenge-name">Doc Ock's Stolen File</h3>
+          <div class="challenge-category">HTTP / File Carving</div>
+          <p style="color:var(--muted);font-size:.88rem;">Dr. Octavius exfiltrated a file over HTTP on port 8080. Carve the file from the capture and read what he stole.</p>
+          <div class="challenge-meta">
+            <span class="challenge-points">200 PTS</span>
+            <span class="difficulty-badge diff-medium">Medium</span>
+          </div>
+          <a href="http://localhost:8000/challenges#05-doc-ock" class="challenge-link" id="challenge-5-link">
+            Open Challenge →
+          </a>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ RULES ════════════════════════════════════════════════════ -->
+  <section id="rules" aria-labelledby="rules-title">
+    <div class="container">
+      <span class="section-tag reveal">📋 Conduct & Scoring</span>
+      <h2 id="rules-title" class="section-title reveal">Rules of the Verse</h2>
+
+      <div class="rules-grid">
+        <div class="rules-box reveal">
+          <h3>Rules</h3>
+          <ul class="rules-list" aria-label="CTF rules">
+            <li>Each team must register an account on the CTFd platform.</li>
+            <li>One flag submission attempt per challenge at a time.</li>
+            <li>No attacking the CTFd platform infrastructure.</li>
+            <li>No sharing flags or solutions with other teams.</li>
+            <li>All challenges are solvable from the provided PCAP files only.</li>
+            <li>No live network scanning required or permitted.</li>
+            <li>Treat other participants and organizers with respect.</li>
+            <li>Decisions of organizers are final.</li>
+          </ul>
+        </div>
+
+        <div class="rules-box reveal">
+          <h3>Scoring</h3>
+          <ul class="rules-list" aria-label="Scoring information">
+            <li>Points are fixed per challenge (not dynamic/decaying).</li>
+            <li>Mission 01 — Peter Parker's Trail: 100 pts</li>
+            <li>Mission 02 — Green Goblin's Trap: 150 pts</li>
+            <li>Mission 03 — Electro's Signal: 100 pts</li>
+            <li>Mission 04 — Mysterio's Network: 200 pts</li>
+            <li>Mission 05 — Doc Ock's File: 200 pts</li>
+            <li>Total possible: 750 points.</li>
+            <li>Tiebreaker: earliest last correct submission wins.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ GETTING STARTED ══════════════════════════════════════════ -->
+  <section id="start" aria-labelledby="start-title">
+    <div class="container">
+      <span class="section-tag reveal">🚀 Getting Started</span>
+      <h2 id="start-title" class="section-title reveal">How to Enter the Verse</h2>
+
+      <div class="steps">
+        <div class="step reveal">
+          <span class="step-num" aria-hidden="true">01</span>
+          <div class="step-content">
+            <h4>Register on CTFd</h4>
+            <p>Click <strong>ENTER THE VERSE</strong> or visit <code>http://localhost:8000/register</code>. Create your account with a team name and password.</p>
+          </div>
+        </div>
+
+        <div class="step reveal">
+          <span class="step-num" aria-hidden="true">02</span>
+          <div class="step-content">
+            <h4>Install Wireshark</h4>
+            <p>Download Wireshark from <code>wireshark.org</code> (Windows/Linux/macOS). It's free and is all you need to open <code>.pcap</code> files.</p>
+          </div>
+        </div>
+
+        <div class="step reveal">
+          <span class="step-num" aria-hidden="true">03</span>
+          <div class="step-content">
+            <h4>Download a Challenge PCAP</h4>
+            <p>Open a challenge on the CTFd platform. Download the attached <code>.pcap</code> file to your local machine.</p>
+          </div>
+        </div>
+
+        <div class="step reveal">
+          <span class="step-num" aria-hidden="true">04</span>
+          <div class="step-content">
+            <h4>Investigate &amp; Find the Flag</h4>
+            <p>Open the PCAP in Wireshark. Use filters, stream following, and packet inspection to locate the hidden flag (format: <code>FLAG{...}</code>).</p>
+          </div>
+        </div>
+
+        <div class="step reveal">
+          <span class="step-num" aria-hidden="true">05</span>
+          <div class="step-content">
+            <h4>Submit Your Flag</h4>
+            <p>Enter the flag in the CTFd challenge page. Points are awarded immediately on correct submission.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ CTA ══════════════════════════════════════════════════════════ -->
+  <section id="cta">
+    <div class="container">
+      <h2 class="reveal">Ready, Spider-Investigator?</h2>
+      <p class="reveal">Every packet tells a story. Every flag is a victory. The multiverse is counting on you.</p>
+      <div class="hero-buttons reveal" role="group">
+        <a href="http://localhost:8000/register" id="cta-register-btn" class="btn btn-primary">⚡ REGISTER NOW</a>
+        <a href="http://localhost:8000/challenges" id="cta-challenges-btn" class="btn btn-secondary">🔍 VIEW ALL CHALLENGES</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ FOOTER ═══════════════════════════════════════════════════════ -->
+  <footer>
+    <div class="footer-logo">SPIDER<span>-VERSE</span> CTF</div>
+    <p style="margin-bottom:.3rem;">Web of Cyber Secrets &nbsp;·&nbsp; Network Forensics Edition</p>
+    <p>Organized by the SPIDER-VERSE CTF Team &nbsp;·&nbsp; Powered by <a href="https://ctfd.io" target="_blank" rel="noopener noreferrer">CTFd</a></p>
+    <p style="margin-top:.75rem;font-size:.72rem;color:#555;">
+      This event uses documentation IP addresses (RFC 5737). No real systems were scanned. All captures are synthetic.
+    </p>
+  </footer>
+
+</div><!-- /.page-wrapper -->
+
+
+<!-- ═══ JAVASCRIPT ═══════════════════════════════════════════════════ -->
+<script>
+'use strict';
+
+// ── CONFIG — Update these for your event ──────────────────────────────────────
+const EVENT_DATE    = '2026-11-01T09:00:00';   // ISO 8601, local time
+const CTFD_BASE_URL = 'http://localhost:8000';  // update for your deployment
+
+// ── Spider Web Canvas Animation ───────────────────────────────────────────────
+(function () {
+  const canvas = document.getElementById('spider-web-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+
+  let W, H;
+  const nodes   = [];
+  const NODE_CT = 60;
+  const EDGE_D  = 180; // max edge distance
+
+  function resize() {
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+
+  function initNodes() {
+    nodes.length = 0;
+    for (let i = 0; i < NODE_CT; i++) {
+      nodes.push({
+        x:  Math.random() * W,
+        y:  Math.random() * H,
+        vx: (Math.random() - .5) * .4,
+        vy: (Math.random() - .5) * .4,
+      });
+    }
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+
+    // Update positions
+    for (const n of nodes) {
+      n.x += n.vx;
+      n.y += n.vy;
+      if (n.x < 0 || n.x > W) n.vx *= -1;
+      if (n.y < 0 || n.y > H) n.vy *= -1;
+    }
+
+    // Draw edges (spider web threads)
+    ctx.lineWidth = .6;
+    for (let i = 0; i < nodes.length; i++) {
+      for (let j = i + 1; j < nodes.length; j++) {
+        const dx = nodes[i].x - nodes[j].x;
+        const dy = nodes[i].y - nodes[j].y;
+        const d  = Math.sqrt(dx*dx + dy*dy);
+        if (d < EDGE_D) {
+          const alpha = 1 - d / EDGE_D;
+          ctx.strokeStyle = `rgba(230,57,70,${alpha * .7})`;
+          ctx.beginPath();
+          ctx.moveTo(nodes[i].x, nodes[i].y);
+          ctx.lineTo(nodes[j].x, nodes[j].y);
+          ctx.stroke();
+        }
+      }
+    }
+
+    // Draw node dots
+    for (const n of nodes) {
+      ctx.fillStyle = 'rgba(0,212,255,.6)';
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, 1.5, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    requestAnimationFrame(draw);
+  }
+
+  window.addEventListener('resize', () => { resize(); initNodes(); });
+  resize();
+  initNodes();
+  draw();
+})();
+
+
+// ── Countdown Timer ───────────────────────────────────────────────────────────
+(function () {
+  function pad(n) { return String(n).padStart(2, '0'); }
+
+  const target  = new Date(EVENT_DATE).getTime();
+  const daysEl  = document.getElementById('cd-days');
+  const hoursEl = document.getElementById('cd-hours');
+  const minsEl  = document.getElementById('cd-mins');
+  const secsEl  = document.getElementById('cd-secs');
+
+  if (!daysEl) return;
+
+  function tick() {
+    const now  = Date.now();
+    const diff = target - now;
+
+    if (diff <= 0) {
+      daysEl.textContent = hoursEl.textContent = minsEl.textContent = secsEl.textContent = '00';
+      return;
+    }
+
+    const totalSecs = Math.floor(diff / 1000);
+    const days  = Math.floor(totalSecs / 86400);
+    const hours = Math.floor((totalSecs % 86400) / 3600);
+    const mins  = Math.floor((totalSecs % 3600) / 60);
+    const secs  = totalSecs % 60;
+
+    daysEl.textContent  = pad(days);
+    hoursEl.textContent = pad(hours);
+    minsEl.textContent  = pad(mins);
+    secsEl.textContent  = pad(secs);
+  }
+
+  tick();
+  setInterval(tick, 1000);
+})();
+
+
+// ── Scroll Reveal ─────────────────────────────────────────────────────────────
+(function () {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+})();
+
+</script>
+
+</body>
+</html>

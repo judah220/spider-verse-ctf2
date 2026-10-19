@@ -1,0 +1,45 @@
+╔══════════════════════════════════════════════════════════════╗
+║           SPIDER-VERSE CTF — Challenge #2                    ║
+║         The Green Goblin's DNS Trap                          ║
+╚══════════════════════════════════════════════════════════════╝
+
+CATEGORY  : DNS / Network Forensics
+DIFFICULTY: Easy–Medium
+POINTS    : 150
+
+── MISSION BRIEFING ──────────────────────────────────────────
+
+The Green Goblin has been using DNS traffic to sneak secrets
+out of S.H.I.E.L.D.'s network. Classic criminal: hiding data
+where nobody looks. DNS — the protocol "just for name lookups."
+
+Or is it?
+
+Forensics analysts flagged suspicious DNS traffic to the domain
+malicious.example.com. Something is encoded in the subdomain
+labels. Decode the message before the Goblin escapes.
+
+── TECHNICAL OBJECTIVE ───────────────────────────────────────
+
+Analyze the DNS queries in the attached PCAP file. The attacker
+encoded a secret in the subdomain portion of DNS query names,
+split across multiple sequential requests.
+
+Identify the pattern, extract the data, reassemble it in the
+correct order, and decode it.
+
+── INVESTIGATION APPROACH ────────────────────────────────────
+
+1. Open dns_exfil.pcap in Wireshark.
+2. Apply filter: dns
+3. Examine the DNS query names (first column in the Info field).
+4. Notice the subdomain structure and ordering scheme.
+5. Extract the encoded pieces from each query name.
+6. Reassemble them in the correct sequence.
+7. Decode the assembled string.
+
+HINT: The encoding method is commonly used in Base64 challenges.
+
+┌─────────────────────────────────────────────────────────────┐
+│  ATTACHMENT: dns_exfil.pcap                                 │
+└─────────────────────────────────────────────────────────────┘
